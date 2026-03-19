@@ -84,6 +84,17 @@ export default function Dashboard() {
     }
   };
 
+  const handleCityChange = (newCityCode: string) => {
+    const city = data.find(c => c.city_code === newCityCode);
+    if (city) {
+      handleGenerateReport(city.city_code, city.city_name, reportPeriod);
+    }
+  };
+
+  const cityOptions = useMemo(() => {
+    return data.map(c => ({ code: c.city_code, name: c.city_name }));
+  }, [data]);
+
   const handleSortChange = (field: SortField) => {
     if (field === sortField) {
       setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'));
@@ -193,7 +204,6 @@ export default function Dashboard() {
           <CityCard 
             key={city.city_code} 
             city={city} 
-            onViewReport={() => handleGenerateReport(city.city_code, city.city_name)}
           />
         ))}
       </div>
@@ -215,6 +225,9 @@ export default function Dashboard() {
           period={reportPeriod}
           onPeriodChange={handlePeriodChange}
           isGenerating={isGeneratingReport}
+          cities={cityOptions}
+          selectedCityCode={selectedCityForReport?.code || ''}
+          onCityChange={handleCityChange}
         />
       )}
     </div>

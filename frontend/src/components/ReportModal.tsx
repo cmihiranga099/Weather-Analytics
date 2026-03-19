@@ -8,6 +8,9 @@ interface ReportModalProps {
   period: string;
   onPeriodChange: (period: string) => void;
   isGenerating: boolean;
+  cities: { code: string; name: string }[];
+  selectedCityCode: string;
+  onCityChange: (cityCode: string) => void;
 }
 
 const ReportModal: React.FC<ReportModalProps> = ({ 
@@ -17,7 +20,10 @@ const ReportModal: React.FC<ReportModalProps> = ({
   cityName, 
   period, 
   onPeriodChange,
-  isGenerating 
+  isGenerating,
+  cities,
+  selectedCityCode,
+  onCityChange
 }) => {
   if (!isOpen) return null;
 
@@ -56,20 +62,41 @@ const ReportModal: React.FC<ReportModalProps> = ({
             </button>
           </div>
           
-          <div className="flex gap-2">
-            {periods.map((p) => (
-              <button
-                key={p.id}
-                onClick={() => onPeriodChange(p.id)}
-                className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all ${
-                  period === p.id
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
-                }`}
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+            <div className="flex gap-2">
+              {periods.map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => onPeriodChange(p.id)}
+                  className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all ${
+                    period === p.id
+                      ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="relative w-full sm:w-64">
+              <select
+                value={selectedCityCode}
+                onChange={(e) => onCityChange(e.target.value)}
+                className="w-full pl-3 pr-10 py-1.5 text-xs bg-gray-100 dark:bg-gray-800 border-none rounded-full text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer"
               >
-                {p.label}
-              </button>
-            ))}
+                {cities.map((city) => (
+                  <option key={city.code} value={city.code}>
+                    {city.name}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
         
