@@ -2,6 +2,8 @@ import { useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
 import LoginPage from './pages/LoginPage';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Added for routing
+import ProtectedRoute from './components/ProtectedRoute'; // Assuming this component exists
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -15,10 +17,6 @@ function App() {
         </div>
       </div>
     );
-  }
-
-  if (!isAuthenticated) {
-    return <LoginPage />;
   }
 
   return (
