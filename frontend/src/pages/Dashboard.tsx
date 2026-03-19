@@ -4,6 +4,7 @@ import CityCard from '../components/CityCard';
 import WeatherChart from '../components/WeatherChart';
 import SortControls from '../components/SortControls';
 import InsightsPanel from '../components/InsightsPanel';
+import ReportModal from '../components/ReportModal';
 import type { SortField, SortDirection, CityWeather } from '../types/weather';
 
 interface Insight {
@@ -35,13 +36,18 @@ function sortData(data: CityWeather[], field: SortField, direction: SortDirectio
 }
 
 export default function Dashboard() {
-  const { data, loading, error, refetch, fetchInsights } = useWeatherData();
+  const { data, loading, error, refetch, fetchInsights, fetchReport } = useWeatherData();
   const [sortField, setSortField] = useState<SortField>('rank');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [scoreFilter, setScoreFilter] = useState<[number, number]>([0, 100]);
   const [showChart, setShowChart] = useState(true);
   const [insights, setInsights] = useState<Insight[]>([]);
   const [insightsLoading, setInsightsLoading] = useState(false);
+  const [isReportOpen, setIsReportOpen] = useState(false);
+  const [reportContent, setReportContent] = useState('');
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+  const [reportPeriod, setReportPeriod] = useState('daily');
+  const [selectedCityForReport, setSelectedCityForReport] = useState<{ code: string; name: string } | null>(null);
 
   // Fetch insights for the top city when data loads
   useEffect(() => {
@@ -56,6 +62,27 @@ export default function Dashboard() {
     };
     getTopInsights();
   }, [data.length]);
+
+  const handleGenerateReport = async (cityCode?: string, cityName?: string, period = 'daily') => {
+    const code = cityCode || (data.length > 0 ? data[0].city_code : null);
+    const name = cityName || (data.length > 0 ? data[0].city_name : '');
+
+    if (code) {
+      setIsGeneratingReport(true);
+      setIsReportOpen(true);
+      setReportPeriod(period);
+      setSelectedCityForReport({ code, name });
+      const result = await fetchReport(code, period);
+      setReportContent(result);
+      setIsGeneratingReport(false);
+    }
+  };
+
+  const handlePeriodChange = (newPeriod: string) => {
+    if (selectedCityForReport) {
+      handleGenerateReport(selectedCityForReport.code, selectedCityForReport.name, newPeriod);
+    }
+  };
 
   const handleSortChange = (field: SortField) => {
     if (field === sortField) {
@@ -120,6 +147,22 @@ export default function Dashboard() {
             {showChart ? 'Hide Chart' : 'Show Chart'}
           </button>
           <button
+            onClick={() => handleGenerateReport()}
+            disabled={isGeneratingReport}
+            className={`px-4 py-2 text-sm text-white rounded-lg transition-colors shadow-sm flex items-center gap-2 ${
+              isGeneratingReport ? 'bg-indigo-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'
+            }`}
+          >
+            {isGeneratingReport ? (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            )}
+            {isGeneratingReport ? 'Generating...' : 'Generate Report'}
+          </button>
+          <button
             onClick={refetch}
             className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
@@ -145,9 +188,13 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredAndSorted.map(city => (
-          <CityCard key={city.city_code} city={city} />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredAndSorted.map((city: CityWeather) => (
+          <CityCard 
+            key={city.city_code} 
+            city={city} 
+            onViewReport={() => handleGenerateReport(city.city_code, city.city_name)}
+          />
         ))}
       </div>
 
@@ -157,6 +204,18 @@ export default function Dashboard() {
             No cities match the current filter criteria.
           </p>
         </div>
+      )}
+
+      {data.length > 0 && (
+        <ReportModal
+          isOpen={isReportOpen}
+          onClose={() => setIsReportOpen(false)}
+          report={reportContent}
+          cityName={selectedCityForReport?.name || ''}
+          period={reportPeriod}
+          onPeriodChange={handlePeriodChange}
+          isGenerating={isGeneratingReport}
+        />
       )}
     </div>
   );

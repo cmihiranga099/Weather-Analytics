@@ -61,9 +61,19 @@ export function useWeatherData() {
     }
   };
 
+  const fetchReport = async (cityCode: string, period = 'daily') => {
+    try {
+      const response = await axios.get(`/weather/${cityCode}/report`, { params: { period } });
+      return response.data.data;
+    } catch (error) {
+      console.error('Failed to fetch report', error);
+      return '';
+    }
+  };
+
   useEffect(() => {
     fetchWeather();
   }, [fetchWeather]);
 
-  return { data, loading, error, refetch: fetchWeather, fetchInsights, fetchHistory, fetchTrends };
+  return { data, loading, error, refetch: fetchWeather, fetchInsights, fetchHistory, fetchTrends, fetchReport };
 }

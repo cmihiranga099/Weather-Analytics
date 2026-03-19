@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\WeatherService;
 use App\Services\AnalyticsService;
 use App\Services\InsightsService;
+use App\Services\ReportService;
 use Illuminate\Http\JsonResponse;
 
 class WeatherController extends Controller
@@ -13,15 +14,18 @@ class WeatherController extends Controller
     private WeatherService $weatherService;
     private AnalyticsService $analyticsService;
     private InsightsService $insightsService;
+    private ReportService $reportService;
 
     public function __construct(
         WeatherService $weatherService,
         AnalyticsService $analyticsService,
-        InsightsService $insightsService
+        InsightsService $insightsService,
+        ReportService $reportService
     ) {
         $this->weatherService = $weatherService;
         $this->analyticsService = $analyticsService;
         $this->insightsService = $insightsService;
+        $this->reportService = $reportService;
     }
 
     public function index(): JsonResponse
@@ -127,6 +131,17 @@ class WeatherController extends Controller
         return response()->json([
             'success' => true,
             'data' => $forecast,
+        ]);
+    }
+
+    public function report(string $cityCode, \Illuminate\Http\Request $request): JsonResponse
+    {
+        $period = $request->query('period', 'daily'); // daily, weekly, monthly, yearly
+        $report = $this->reportService->generateReport($cityCode, $period);
+
+        return response()->json([
+            'success' => true,
+            'data' => $report,
         ]);
     }
 }

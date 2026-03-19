@@ -18,6 +18,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/weather/{cityCode}/insights', [WeatherController::class, 'insights']);
     Route::get('/weather/{cityCode}/history', [WeatherController::class, 'history']);
     Route::get('/weather/{cityCode}/forecast', [WeatherController::class, 'forecast']);
+    Route::get('/weather/{cityCode}/report', [WeatherController::class, 'report']);
 });
 
 // Public debug endpoint for cache status
