@@ -10,6 +10,8 @@ class WeatherService
 {
     private string $apiKey;
     private string $baseUrl = 'https://api.openweathermap.org/data/2.5/weather';
+    private string $forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast';
+    private string $uvUrl = 'https://api.openweathermap.org/data/2.5/uvi';
     private ComfortIndexCalculator $calculator;
 
     public function __construct(ComfortIndexCalculator $calculator)
@@ -94,6 +96,43 @@ class WeatherService
             }
 
             return $results;
+        });
+    }
+
+    public function fetchForecastForCity(string $cityCode): ?array
+    {
+        $cacheKey = "forecast_{$cityCode}";
+
+        return Cache::remember($cacheKey, now()->addHours(3), function () use ($cityCode) {
+            $response = Http::get($this->forecastUrl, [
+                'id' => $cityCode,
+                'appid' => $this->apiKey,
+            ]);
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            return null;
+        });
+    }
+
+    public function fetchUVForCity(float $lat, float $lon): ?array
+    {
+        $cacheKey = "uv_{$lat}_{$lon}";
+
+        return Cache::remember($cacheKey, now()->addHours(3), function () use ($lat, $lon) {
+            $response = Http::get($this->uvUrl, [
+                'lat' => $lat,
+                'lon' => $lon,
+                'appid' => $this->apiKey,
+            ]);
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+
+            return null;
         });
     }
 

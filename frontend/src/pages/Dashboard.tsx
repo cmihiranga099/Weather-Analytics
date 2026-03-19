@@ -1,9 +1,16 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useWeatherData } from '../hooks/useWeatherData';
 import CityCard from '../components/CityCard';
 import WeatherChart from '../components/WeatherChart';
 import SortControls from '../components/SortControls';
+import InsightsPanel from '../components/InsightsPanel';
 import type { SortField, SortDirection, CityWeather } from '../types/weather';
+
+interface Insight {
+  type: 'alert' | 'warning' | 'info' | 'trend';
+  icon: string;
+  message: string;
+}
 
 function sortData(data: CityWeather[], field: SortField, direction: SortDirection): CityWeather[] {
   const sorted = [...data].sort((a, b) => {
@@ -28,11 +35,27 @@ function sortData(data: CityWeather[], field: SortField, direction: SortDirectio
 }
 
 export default function Dashboard() {
-  const { data, loading, error, refetch } = useWeatherData();
+  const { data, loading, error, refetch, fetchInsights } = useWeatherData();
   const [sortField, setSortField] = useState<SortField>('rank');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [scoreFilter, setScoreFilter] = useState<[number, number]>([0, 100]);
   const [showChart, setShowChart] = useState(true);
+  const [insights, setInsights] = useState<Insight[]>([]);
+  const [insightsLoading, setInsightsLoading] = useState(false);
+
+  // Fetch insights for the top city when data loads
+  useEffect(() => {
+    const getTopInsights = async () => {
+      if (data.length > 0) {
+        setInsightsLoading(true);
+        const topCity = data[0];
+        const result = await fetchInsights(topCity.city_code);
+        setInsights(result);
+        setInsightsLoading(false);
+      }
+    };
+    getTopInsights();
+  }, [data.length]);
 
   const handleSortChange = (field: SortField) => {
     if (field === sortField) {
@@ -113,7 +136,14 @@ export default function Dashboard() {
         onFilterChange={setScoreFilter}
       />
 
-      {showChart && <WeatherChart data={data} />}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          {showChart && <WeatherChart data={data} />}
+        </div>
+        <div className="lg:col-span-1">
+          <InsightsPanel insights={insights} loading={insightsLoading} />
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredAndSorted.map(city => (

@@ -1,10 +1,10 @@
-import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Dashboard from './pages/Dashboard';
 import LoginPage from './pages/LoginPage';
 
 function App() {
-  const { isAuthenticated, isLoading } = useAuth0();
+  const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
     return (

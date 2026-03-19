@@ -15,6 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->prepend(Cors::class);
     })
+    ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule) {
+        $schedule->command('weather:collect')->hourly();
+        $schedule->command('weather:report')->dailyAt('08:00');
+    })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

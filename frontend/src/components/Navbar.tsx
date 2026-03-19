@@ -1,8 +1,8 @@
-import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth } from '../context/AuthContext';
 import { useDarkMode } from '../hooks/useDarkMode';
 
 export default function Navbar() {
-  const { isAuthenticated, user, logout } = useAuth0();
+  const { isAuthenticated, user, logout } = useAuth();
   const { isDark, toggle } = useDarkMode();
 
   return (
@@ -41,7 +41,7 @@ export default function Navbar() {
                   {user.email}
                 </span>
                 <button
-                  onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+                  onClick={logout}
                   className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
                 >
                   Logout

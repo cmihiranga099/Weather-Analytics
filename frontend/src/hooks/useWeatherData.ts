@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth } from '../context/AuthContext';
+import axios from '../utils/axios';
 import type { CityWeather } from '../types/weather';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
-
 export function useWeatherData() {
-  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
+  const { isAuthenticated } = useAuth();
   const [data, setData] = useState<CityWeather[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -17,40 +16,54 @@ export function useWeatherData() {
       setLoading(true);
       setError(null);
 
-      const token = await getAccessTokenSilently({
-        authorizationParams: {
-          audience: import.meta.env.VITE_AUTH0_AUDIENCE,
-        },
-      });
-
-      const response = await fetch(`${API_BASE}/weather`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch weather data: ${response.status}`);
-      }
-
-      const result = await response.json();
+      const response = await axios.get('/weather');
+      const result = response.data;
 
       if (result.success) {
         setData(result.data);
       } else {
         throw new Error('API returned unsuccessful response');
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
+    } catch (err: any) {
+      setError(err.response?.data?.message || err.message || 'An unexpected error occurred');
     } finally {
       setLoading(false);
     }
-  }, [getAccessTokenSilently, isAuthenticated]);
+  }, [isAuthenticated]);
+
+  const fetchInsights = async (cityCode: string) => {
+    try {
+      const response = await axios.get(`/weather/${cityCode}/insights`);
+      return response.data.data;
+    } catch (error) {
+      console.error('Failed to fetch insights', error);
+      return [];
+    }
+  };
+
+  const fetchHistory = async (cityCode: string) => {
+    try {
+      const response = await axios.get(`/weather/${cityCode}/history`);
+      return response.data.data;
+    } catch (error) {
+      console.error('Failed to fetch history', error);
+      return [];
+    }
+  };
+
+  const fetchTrends = async (cityCode: string) => {
+    try {
+      const response = await axios.get(`/weather/${cityCode}/trends`);
+      return response.data.data;
+    } catch (error) {
+      console.error('Failed to fetch trends', error);
+      return null;
+    }
+  };
 
   useEffect(() => {
     fetchWeather();
   }, [fetchWeather]);
 
-  return { data, loading, error, refetch: fetchWeather };
+  return { data, loading, error, refetch: fetchWeather, fetchInsights, fetchHistory, fetchTrends };
 }
