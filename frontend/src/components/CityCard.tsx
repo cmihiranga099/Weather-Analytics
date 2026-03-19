@@ -11,13 +11,6 @@ function getScoreColor(score: number): string {
   return 'text-red-600 dark:text-red-400';
 }
 
-function getScoreBg(score: number): string {
-  if (score >= 80) return 'bg-green-100 dark:bg-green-900/30';
-  if (score >= 60) return 'bg-yellow-100 dark:bg-yellow-900/30';
-  if (score >= 40) return 'bg-orange-100 dark:bg-orange-900/30';
-  return 'bg-red-100 dark:bg-red-900/30';
-}
-
 function getRankBadge(rank: number): string {
   if (rank === 1) return 'bg-yellow-400 text-yellow-900';
   if (rank === 2) return 'bg-gray-300 text-gray-800';
@@ -78,11 +71,17 @@ export default function CityCard({ city }: CityCardProps) {
 
       <div className="space-y-4">
         {/* Progress Bar */}
-        <div className="relative h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-200/50 dark:border-slate-700/50">
-          <div
-            className={`absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_currentColor] ${getScoreColor(city.comfort_score).replace('text-', 'bg-')}`}
-            style={{ width: `${city.comfort_score}%` }}
-          />
+        <div className="space-y-2">
+          <div className="flex justify-between items-end px-1">
+            <span className="text-[9px] font-black underline decoration-primary-500/30 underline-offset-4 text-slate-500 uppercase tracking-widest">Comfort Status</span>
+            <span className="text-[10px] font-black text-slate-400">{city.comfort_score}%</span>
+          </div>
+          <div className="relative h-3 w-full bg-slate-200 dark:bg-slate-700/50 rounded-full overflow-hidden border border-slate-300/30 dark:border-slate-600/30">
+            <div
+              className={`absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_15px_currentColor] animate-pulse-slow ${getScoreColor(city.comfort_score).replace('text-', 'bg-')}`}
+              style={{ width: `${city.comfort_score}%` }}
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
