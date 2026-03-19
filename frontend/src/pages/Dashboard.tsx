@@ -214,7 +214,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-4">
           {showChart && (
-            <div className="glass rounded-3xl p-6 transition-all duration-500 animate-slide-up">
+            <div className="glass rounded-[32px] p-7 transition-all duration-500 animate-slide-up border-2 border-slate-200/80 dark:border-slate-700/60">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-bold text-slate-800 dark:text-white">Trend Distribution</h3>
                 <span className="text-xs font-medium text-slate-500">Last 24 Hours</span>

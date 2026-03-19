@@ -14,7 +14,7 @@
 
 @layer components {
   .glass {
-    @apply bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl border border-white/20 dark:border-slate-800/50 shadow-xl;
+    @apply bg-white/90 dark:bg-slate-900/80 backdrop-blur-2xl border-2 border-slate-200 dark:border-slate-700 shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)];
   }
   
   .card-hover {

@@ -23,7 +23,7 @@ export default function CityCard({ city }: CityCardProps) {
   const isGoodComfort = city.comfort_score >= 80;
 
   return (
-    <div className="glass rounded-3xl p-6 card-hover group border-white/40 dark:border-slate-800/50 animate-slide-up">
+    <div className="glass rounded-[32px] p-7 card-hover group border-2 border-slate-200/80 dark:border-slate-600/50 animate-slide-up shadow-2xl">
       <div className="flex items-start justify-between mb-6">
         <div className="space-y-1">
           <div className="flex items-center gap-1.5">

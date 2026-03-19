@@ -23,7 +23,7 @@ export default function SortControls({
   onFilterChange,
 }: SortControlsProps) {
   return (
-    <div className="glass rounded-3xl p-5 flex flex-col lg:flex-row gap-6 items-start lg:items-center animate-slide-up border-white/20 dark:border-slate-800/50" style={{ animationDelay: '0.05s' }}>
+    <div className="glass rounded-[32px] p-7 flex flex-col lg:flex-row gap-6 items-start lg:items-center animate-slide-up border-2 border-slate-200/80 dark:border-slate-700/60 shadow-2xl" style={{ animationDelay: '0.05s' }}>
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto">
         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 whitespace-nowrap">Order By</span>
         <div className="flex flex-wrap gap-2">
