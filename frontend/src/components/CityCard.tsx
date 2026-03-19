@@ -27,68 +27,87 @@ function getRankBadge(rank: number): string {
 
 export default function CityCard({ city }: CityCardProps) {
   const iconUrl = `https://openweathermap.org/img/wn/${city.weather.icon}@2x.png`;
+  const isGoodComfort = city.comfort_score >= 80;
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-shadow p-5 border border-gray-100 dark:border-gray-700">
-      <div className="flex items-start justify-between mb-3">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            {city.city_name}
-          </h3>
-          <span className="text-sm text-gray-500 dark:text-gray-400">
+    <div className="glass rounded-3xl p-6 card-hover group border-white/40 dark:border-slate-800/50 animate-slide-up">
+      <div className="flex items-start justify-between mb-6">
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight leading-none">
+              {city.city_name}
+            </h3>
+            {isGoodComfort && (
+              <span className="flex h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+            )}
+          </div>
+          <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block">
             {city.country}
           </span>
         </div>
-        <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold ${getRankBadge(city.rank)}`}>
-          {city.rank}
-        </span>
-      </div>
-
-      <div className="flex items-center gap-2 mb-3">
-        <img src={iconUrl} alt={city.weather.description} className="w-12 h-12" />
-        <div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
-            {city.temperature.current}°C
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 capitalize">
-            {city.weather.description}
-          </p>
+        <div className={`flex items-center justify-center w-10 h-10 rounded-2xl text-sm font-black shadow-inner ${getRankBadge(city.rank)}`}>
+          #{city.rank}
         </div>
       </div>
 
-      <div className={`rounded-lg p-3 mb-3 ${getScoreBg(city.comfort_score)}`}>
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Comfort Score
-          </span>
-          <span className={`text-2xl font-bold ${getScoreColor(city.comfort_score)}`}>
+      <div className="flex items-center justify-between mb-8 bg-white/40 dark:bg-slate-800/30 rounded-2xl p-4 border border-white/20 dark:border-slate-700/20 backdrop-blur-sm">
+        <div className="flex items-center gap-3">
+          <div className="relative group-hover:scale-110 transition-transform duration-300">
+             <div className="absolute inset-0 bg-blue-500/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+             <img src={iconUrl} alt={city.weather.description} className="relative w-16 h-16 pointer-events-none" />
+          </div>
+          <div>
+            <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">
+              {city.temperature.current}°<span className="text-blue-500">c</span>
+            </p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              {city.weather.description}
+            </p>
+          </div>
+        </div>
+        
+        <div className="text-right">
+          <div className={`text-3xl font-black ${getScoreColor(city.comfort_score)}`}>
             {city.comfort_score}
-          </span>
+          </div>
+          <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em]">
+            Comfort
+          </p>
         </div>
-        <div className="mt-2 w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+      </div>
+
+      <div className="space-y-4">
+        {/* Progress Bar */}
+        <div className="relative h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-200/50 dark:border-slate-700/50">
           <div
-            className="h-2 rounded-full bg-current transition-all duration-500"
+            className={`absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_currentColor] ${getScoreColor(city.comfort_score).replace('text-', 'bg-')}`}
             style={{ width: `${city.comfort_score}%` }}
           />
         </div>
-      </div>
 
-      <div className="grid grid-cols-2 gap-2 text-sm">
-        <div className="flex justify-between text-gray-600 dark:text-gray-400">
-          <span>Feels like</span>
-          <span className="font-medium">{city.temperature.feels_like}°C</span>
-        </div>
-        <div className="flex justify-between text-gray-600 dark:text-gray-400">
-          <span>Humidity</span>
-          <span className="font-medium">{city.humidity}%</span>
-        </div>
-        <div className="flex justify-between text-gray-600 dark:text-gray-400">
-          <span>Wind</span>
-          <span className="font-medium">{city.wind_speed} m/s</span>
-        </div>
-        <div className="flex justify-between text-gray-600 dark:text-gray-400">
-          <span>Pressure</span>
-          <span className="font-medium">{city.pressure} hPa</span>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-1">
+            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Atmosphere</p>
+            <div className="flex items-center gap-1.5">
+               <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+               <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{city.humidity}% Humidity</p>
+            </div>
+            <div className="flex items-center gap-1.5">
+               <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+               <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{city.pressure} hPa</p>
+            </div>
+          </div>
+          <div className="space-y-1">
+            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Dynamics</p>
+            <div className="flex items-center gap-1.5">
+               <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+               <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{city.temperature.feels_like}° Feels</p>
+            </div>
+            <div className="flex items-center gap-1.5">
+               <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+               <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{city.wind_speed} m/s Wind</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

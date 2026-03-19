@@ -45,33 +45,39 @@ const ReportModal: React.FC<ReportModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white dark:bg-gray-900 w-full max-w-2xl max-h-[80vh] rounded-2xl shadow-2xl flex flex-col animate-in zoom-in-95 duration-200">
-        <div className="p-6 border-b border-gray-100 dark:border-gray-800">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-              Weather Report: {cityName}
-            </h3>
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
+      <div className="glass w-full max-w-2xl max-h-[85vh] rounded-[32px] shadow-2xl flex flex-col animate-slide-up border-white/30 dark:border-slate-800/50">
+        <div className="p-8 border-b border-slate-100 dark:border-slate-800/50">
+          <div className="flex justify-between items-start mb-6">
+            <div className="space-y-1">
+              <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                Weather <span className="text-primary-600 dark:text-primary-400">Intelligence Report</span>
+              </h3>
+              <p className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                {cityName}
+              </p>
+            </div>
             <button 
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+              className="p-2 bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-xl transition-all hover:rotate-90"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
           
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-            <div className="flex gap-2">
+            <div className="flex gap-1.5 bg-slate-100/50 dark:bg-slate-900/40 p-1 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 w-full sm:w-auto overflow-x-auto no-scrollbar">
               {periods.map((p) => (
                 <button
                   key={p.id}
                   onClick={() => onPeriodChange(p.id)}
-                  className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all ${
+                  className={`px-5 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${
                     period === p.id
-                      ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-                      : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                      ? 'bg-white dark:bg-slate-800 text-primary-600 dark:text-primary-400 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700'
+                      : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
                   }`}
                 >
                   {p.label}
@@ -79,19 +85,19 @@ const ReportModal: React.FC<ReportModalProps> = ({
               ))}
             </div>
 
-            <div className="relative w-full sm:w-64">
+            <div className="relative w-full sm:w-48 group lg:ml-auto">
               <select
                 value={selectedCityCode}
                 onChange={(e) => onCityChange(e.target.value)}
-                className="w-full pl-3 pr-10 py-1.5 text-xs bg-gray-100 dark:bg-gray-800 border-none rounded-full text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer"
+                className="w-full pl-4 pr-10 py-2.5 text-xs font-bold bg-white/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl text-slate-700 dark:text-slate-300 focus:ring-4 focus:ring-primary-500/10 focus:border-primary-500 appearance-none cursor-pointer transition-all"
               >
                 {cities.map((city) => (
-                  <option key={city.code} value={city.code}>
+                  <option key={city.code} value={city.code} className="bg-white dark:bg-slate-900">
                     {city.name}
                   </option>
                 ))}
               </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
+              <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400 group-hover:text-primary-500 transition-colors">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
@@ -100,39 +106,51 @@ const ReportModal: React.FC<ReportModalProps> = ({
           </div>
         </div>
         
-        <div className="p-6 overflow-y-auto flex-1 font-mono text-sm">
-          <div className={`whitespace-pre-wrap text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl border border-gray-100 dark:border-gray-800 transition-opacity ${isGenerating ? 'opacity-50' : 'opacity-100'}`}>
+        <div className="p-8 overflow-y-auto flex-1 custom-scrollbar">
+          <div className={`relative whitespace-pre-wrap text-slate-700 dark:text-slate-300 bg-slate-50/50 dark:bg-slate-900/50 p-8 rounded-[24px] border border-slate-200/50 dark:border-slate-800/50 transition-all duration-500 font-mono text-sm leading-relaxed ${isGenerating ? 'opacity-40 blur-sm scale-95' : 'opacity-100 scale-100'}`}>
             {isGenerating ? (
-              <div className="flex flex-col items-center justify-center py-12 gap-3">
-                <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                <p className="text-gray-500 animate-pulse">Analyzing historical data...</p>
+              <div className="flex flex-col items-center justify-center py-20 gap-4">
+                <div className="relative">
+                  <div className="w-12 h-12 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin" />
+                  <div className="absolute inset-0 w-12 h-12 border-4 border-transparent border-b-blue-500 rounded-full animate-spin [animation-duration:1.5s]" />
+                </div>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 animate-pulse">Aggregating Metrics...</p>
               </div>
             ) : (
-              report || "No report data available."
+              report || (
+                <div className="flex flex-col items-center justify-center py-20 opacity-40">
+                   <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                   </svg>
+                   <p className="font-bold">Awaiting Data Generation</p>
+                </div>
+              )
             )}
           </div>
         </div>
 
-        <div className="p-6 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-3">
+        <div className="p-8 border-t border-slate-100 dark:border-slate-800/50 flex justify-end items-center gap-4 bg-slate-50/30 dark:bg-slate-900/30">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+            className="px-6 py-2.5 text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
           >
-            Close
+            Collapse
           </button>
           <button
             onClick={downloadReport}
-            className="px-6 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+            className="btn-primary flex items-center gap-2 group"
+            disabled={!report || isGenerating}
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            <svg className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
-            Download Markdown
+            Export as MD
           </button>
         </div>
       </div>
     </div>
   );
-};
+}
+;
 
 export default ReportModal;
